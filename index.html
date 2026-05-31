@@ -619,18 +619,18 @@
             // Création de l'Embed Discord
             const embedData = {
                 username: "La Cantina - Commandes",
-                avatar_url: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?q=80&w=200",
+                avatar_url: "https://i.ibb.co/35hMYknF/image3.png",
                 embeds: [{
                     title: "🍔 NOUVELLE COMMANDE REÇUE",
                     color: 16752451, // Couleur Orange (Hex: #ff9f43)
                     fields: [
-                        { name: "👤 Client (RP)", value: name, inline: true },
+                        { name: "👤 Client", value: name, inline: true },
                         { name: "📞 Téléphone", value: phone, inline: true },
                         { name: "📦 Mode de retrait", value: type, inline: true },
                         { name: "🛒 Contenu de la commande", value: itemText, inline: false },
                         { name: "💰 Total de la facture", value: `**${total} $**`, inline: false }
                     ],
-                    footer: { text: "Système de Commande de La Cantina — FiveM" },
+                    footer: { text: "Système de Commande de La Cantina" },
                     timestamp: new Date()
                 }]
             };
