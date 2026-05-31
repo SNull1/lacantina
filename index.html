@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cantina - Commande en ligne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #ff9f43;
+            --primary-hover: #ee5253;
+            --dark: #1e272e;
+            --light-dark: #2f3640;
+            --text-color: #f5f6fa;
+            --accent: #10ac84;
+            --overlay: rgba(0, 0, 0, 0.75);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000') no-repeat center center/cover;
+            height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        header h1 {
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        header h1 span {
+            color: var(--primary);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- MENU --- */
+        .menu-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--light-dark);
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .card-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .card .price {
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .btn-add {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: #e18930;
+        }
+
+        /* --- PANIER & INFOS --- */
+        .sidebar {
+            background-color: var(--light-dark);
+            border-radius: 12px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--dark);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .cart-items {
+            margin: 20px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            background: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .cart-item .remove-btn {
+            color: #ee5253;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .total-box {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed rgba(255,255,255,0.1);
+            color: var(--accent);
+        }
+
+        .btn-order {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .btn-order:hover {
+            background-color: #0ca07a;
+        }
+
+        /* --- NOTIFICATION --- */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: -350px;
+            background-color: var(--accent);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: right 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 999;
+        }
+
+        .notification.show {
+            right: 20px;
+        }
+
+        /* --- BOITE CONTEXTUELLE MODALE (QUANTITÉ) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background-color: var(--light-dark);
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-box h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-box p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .modal-box .input-qty {
+            width: 100px;
+            padding: 12px;
+            background-color: var(--dark);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 1.3rem;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .modal-box .input-qty:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .modal-btn.confirm {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .modal-btn.confirm:hover {
+            background-color: #0ca07a;
+        }
+
+        .modal-btn.cancel {
+            background-color: #ee5253;
+            color: white;
+        }
+
+        .modal-btn.cancel:hover {
+            background-color: #d63031;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Restaurant <span>La Cantina</span></h1>
+        <p><i class="fas fa-utensils"></i> Le goût de l'amour et du mexique, Passez votre commande en ligne !</p>
+    </header>
+
+    <div class="container">
+        
+        <main>
+            <h2 class="menu-title">🍔 Les Plats</h2>
+            <div class="grid-menu" id="menu-plats"></div>
+
+            <h2 class="menu-title" style="margin-top: 40px;">🥤 Les Boissons</h2>
+            <div class="grid-menu" id="menu-boissons"></div>
+        </main>
+
+        <aside class="sidebar">
+            <h2><i class="fas fa-shopping-cart"></i> Votre Panier</h2>
+            
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Nom / Prénom</label>
+                <input type="text" id="username" placeholder="Ex: John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone"><i class="fas fa-phone"></i> Numéro de Téléphone</label>
+                <input type="text" id="phone" placeholder="Ex: 555-0192" required>
+            </div>
+
+            <div class="form-group">
+                <label for="type"><i class="fas fa-truck"></i> Mode de retrait</label>
+                <select id="type">
+                    <option value="Sur place">Sur place</option>
+                    <option value="Livraison">Livraison (+2000$)</option>
+                </select>
+            </div>
+
+            <div class="cart-items" id="cart-list">
+                <p style="text-align: center; opacity: 0.5;">Votre panier est vide.</p>
+            </div>
+
+            <div class="total-box">
+                <span>Total:</span>
+                <span id="total-price">0 $</span>
+            </div>
+
+            <button class="btn-order" id="submit-btn" onclick="submitOrder()"><i class="fas fa-check"></i> Confirmer la commande</button>
+        </aside>
+    </div>
+
+    <div class="modal-overlay" id="qty-modal">
+        <div class="modal-box">
+            <h3 id="modal-item-title">Ajouter un produit</h3>
+            <p>Définissez la quantité désirée pour cet article :</p>
+            <input type="number" id="modal-qty-input" class="input-qty" min="1" value="1">
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Annuler</button>
+                <button class="modal-btn confirm" onclick="confirmAddToCart()">Ajouter au panier</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notif">
+        <i class="fas fa-check-circle"></i> <span id="notif-text">Commande envoyée !</span>
+    </div>
+
+    <script>
+        // CONFIGURATION WEBHOOK DISCORD
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1507908099913289862/xgR135JXnWPETu9luy4PqWR7Mcmn8kTTE9BUxVnh17iqsmyv7-9hrTuYahu4dw1qHs2P";
+
+        // Liste des articles avec de vraies images d'illustration adaptées
+        const menuItems = [
+            { id: 1, name: "Tacos", price: 150, category: "plat", img: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=1194&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 2, name: "Burrito Épicé", price: 120, category: "plat", img: "https://images.unsplash.com/photo-1731090389462-351421240be9?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+            { id: 3, name: "Enchiladas Piquantes", price: 50, category: "plat", img: "https://images.radio-canada.ca/v1/alimentation/recette/16x9/enchiladas-express-poulet-mexique.jpg" },
+            { id: 4, name: "Tamales Traditionnels", price: 90, category: "plat", img: "https://buenofoods.com/wp-content/uploads/2022/09/Tamales-scaled.jpg" },
+            { id: 5, name: "Quesadillas Dorées", price: 90, category: "plat", img: "https://revolutionfermentation.com/wp-content/uploads/2025/03/Quesadillas-kimchi-Banner-1400x788-1.jpg" },
+            { id: 6, name: "Frijoles Refritos", price: 90, category: "plat", img: "https://static01.nyt.com/images/2023/07/07/multimedia/07TORTILLASREX4-frijoles-de-olla-cmqb/TORTILLASREX4-frijoles-de-olla-cmqb-threeByTwoLargeAt2X.jpg" },
+            { id: 7, name: "Eau Fraîche", price: 30, category: "boisson", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr2JgDvvOnyvnCFH1ArFixs5n5uZ92fgj6-Q&s" },
+            { id: 8, name: "Bière", price: 60, category: "boisson", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3A79SrsMeniiaCiWQVIQxQ7dZfx5UebZtLg&s" },
+            { id: 9, name: "Cocktail Tequi-la-la", price: 25, category: "boisson", img: "https://static01.nyt.com/images/2023/08/17/multimedia/ND-Tequila-Sunrise/LH-Sangria-tjvl-superJumbo.jpg" },
+            { id: 10, name: "Vodka Énergie", price: 25, category: "boisson", img: "https://www.drinklab.org/wp-content/uploads/Vodka-Red-Bull-500x375.jpg" },
+            { id: 11, name: "Ecola", price: 25, category: "boisson", img: "https://www.hccb.in/images/coke1.png" },
+            { id: 12, name: "Sprunk", price: 25, category: "boisson", img: "https://www.shutterstock.com/image-photo/poznan-pol-apr-02-2025-260nw-2611900329.jpg" },
+            { id: 13, name: "Citronnade", price: 25, category: "boisson", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_axOOmx00TuS5SUVMPXhjxVbDzwm2PpoUeA&s" },
+        ];
+
+        let cart = [];
+        let currentItemSelecting = null;
+
+        function initMenu() {
+            const containerPlats = document.getElementById('menu-plats');
+            const containerBoissons = document.getElementById('menu-boissons');
+
+            menuItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${item.img}" alt="${item.name}" class="card-img">
+                    <div class="card-info">
+                        <h3>${item.name}</h3>
+                        <div class="price">${item.price} $</div>
+                        <button class="btn-add" onclick="openQtyModal(${item.id})">Ajouter</button>
+                    </div>
+                `;
+
+                if(item.category === "plat") {
+                    containerPlats.appendChild(card);
+                } else {
+                    containerBoissons.appendChild(card);
+                }
+            });
+        }
+
+        // Gestion de la Boîte Contextuelle Personnalisée
+        function openQtyModal(id) {
+            const item = menuItems.find(i => i.id === id);
+            currentItemSelecting = item;
+            
+            document.getElementById('modal-item-title').innerText = `Ajouter : ${item.name}`;
+            document.getElementById('modal-qty-input').value = "1";
+            document.getElementById('qty-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('qty-modal').classList.remove('active');
+            currentItemSelecting = null;
+        }
+
+        function confirmAddToCart() {
+            if (!currentItemSelecting) return;
+
+            const qtyInput = document.getElementById('modal-qty-input').value;
+            const quantity = parseInt(qtyInput);
+
+            if (isNaN(quantity) || quantity <= 0) {
+                alert("Veuillez entrer une quantité valide supérieure à 0 !");
+                return;
+            }
+
+            const existing = cart.find(c => c.id === currentItemSelecting.id);
+
+            if(existing) {
+                existing.quantity += quantity;
+            } else {
+                cart.push({ ...currentItemSelecting, quantity: quantity });
+            }
+            
+            updateCart();
+            showNotification(`Ajouté : ${currentItemSelecting.name} (x${quantity})`);
+            closeModal();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartList = document.getElementById('cart-list');
+            const totalText = document.getElementById('total-price');
+            
+            if(cart.length === 0) {
+                cartList.innerHTML = `<p style="text-align: center; opacity: 0.5;">Votre panier est vide.</p>`;
+                totalText.innerText = "0 $";
+                return;
+            }
+
+            cartList.innerHTML = "";
+            let total = 0;
+
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <span>${item.name} (x${item.quantity})</span>
+                    <div>
+                        <span style="margin-right: 10px; font-weight:600;">${item.price * item.quantity}$</span>
+                        <button class="remove-btn" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                cartList.appendChild(div);
+            });
+
+            const deliveryType = document.getElementById('type').value;
+            if(deliveryType === "Livraison") {
+                total += 2000;
+            }
+
+            totalText.innerText = `${total} $`;
+        }
+
+        document.getElementById('type').addEventListener('change', updateCart);
+
+        function showNotification(text) {
+            const notif = document.getElementById('notif');
+            document.getElementById('notif-text').innerText = text;
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 2500);
+        }
+
+        // Fonction d'envoi de la commande
+        function submitOrder() {
+            const name = document.getElementById('username').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const type = document.getElementById('type').value;
+            const orderBtn = document.getElementById('submit-btn');
+
+            if(!name || !phone) {
+                alert("Veuillez remplir votre nom RP et votre numéro de téléphone !");
+                return;
+            }
+
+            if(cart.length === 0) {
+                alert("Votre panier est vide !");
+                return;
+            }
+
+            if(WEBHOOK_URL === "" || WEBHOOK_URL.includes("TON_WEBHOOK")) {
+                alert("Erreur de configuration : Le gérant n'a pas configuré l'adresse de réception (Webhook).");
+                return;
+            }
+
+            // Désactivation du bouton le temps de l'envoi
+            orderBtn.disabled = true;
+            orderBtn.innerText = "Envoi en cours...";
+
+            // Construction de la liste des produits pour Discord
+            let itemText = "";
+            let total = 0;
+            cart.forEach(item => {
+                itemText += `🔹 **${item.name}** x${item.quantity} \`(${item.price * item.quantity}$)\`\n`;
+                total += item.price * item.quantity;
+            });
+            if(type === "Livraison") {
+                itemText += `📦 **Frais de livraison** \`(2000$)\`\n`;
+                total += 2000;
+            }
+
+            // Création de l'Embed Discord
+            const embedData = {
+                username: "La Cantina - Commandes",
+                avatar_url: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?q=80&w=200",
+                embeds: [{
+                    title: "🍔 NOUVELLE COMMANDE REÇUE",
+                    color: 16752451, // Couleur Orange (Hex: #ff9f43)
+                    fields: [
+                        { name: "👤 Client (RP)", value: name, inline: true },
+                        { name: "📞 Téléphone", value: phone, inline: true },
+                        { name: "📦 Mode de retrait", value: type, inline: true },
+                        { name: "🛒 Contenu de la commande", value: itemText, inline: false },
+                        { name: "💰 Total de la facture", value: `**${total} $**`, inline: false }
+                    ],
+                    footer: { text: "Système de Commande de La Cantina — FiveM" },
+                    timestamp: new Date()
+                }]
+            };
+
+            // Envoi de la requête HTTP POST à Discord
+            fetch(WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(embedData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert(`Merci ${name} ! Votre commande a été envoyée en cuisine.`);
+                    // Vider le panier
+                    cart = [];
+                    document.getElementById('username').value = "";
+                    document.getElementById('phone').value = "";
+                    updateCart();
+                } else {
+                    alert("Une erreur est survenue lors de l'envoi de la commande à Discord.");
+                }
+            })
+            .catch(error => {
+                console.error("Erreur Webhook:", error);
+                alert("Impossible de joindre le serveur Discord.");
+            })
+            .finally(() => {
+                // Réactivation du bouton après traitement
+                orderBtn.disabled = false;
+                orderBtn.innerHTML = '<i class="fas fa-check"></i> Confirmer la commande';
+            });
+        }
+
+        window.onload = initMenu;
+    </script>
+</body>
+</html>
